@@ -3,11 +3,7 @@
   "builds": [
     {
       "src": "main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.9"
-      }
+      "use": "vercel-playwright"
     },
     {
       "src": "static/**",
@@ -20,6 +16,11 @@
       "dest": "/static/$1"
     },
     {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ]
+}
       "src": "/(.*)",
       "dest": "main.py"
     }
