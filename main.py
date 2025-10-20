@@ -72,5 +72,5 @@ def buscar_nombre():
             'details': str(e)
         }), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.run(debug=True)
