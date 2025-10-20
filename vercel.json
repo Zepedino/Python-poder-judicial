@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "main.py",
-      "use": "vercel-playwright"
+      "use": "@microlink/vercel-builder-playwright"
     },
     {
       "src": "static/**",
