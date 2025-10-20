@@ -1,268 +1,249 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="light" lang="es">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Justicia Clara - Comprende tu causa judicial en lenguaje simple</title>
-    <meta name="description" content="Traduce información judicial técnica a lenguaje simple y comprensible. Consulta causas por ROL, nombre, fecha o RUC." />
-    <meta name="keywords" content="poder judicial, causas judiciales, chile, consulta causas, traducción legal, lenguaje simple" />
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    
-    <!-- Custom styles -->
-    <link href="/static/css/style.css" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Justicia Clara - Consulta tu Causa</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#059669",
+            "background-light": "#f5f8f7",
+            "background-dark": "#10221c",
+            "text-light": "#212529",
+            "text-dark": "#f8f9fa"
+          },
+          fontFamily: {
+            "display": ["Public Sans", "sans-serif"]
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Public Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+    }
+    /* Ocultar elementos por defecto */
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
-<body>
-    <div class="container mx-auto px-4 max-w-7xl">
-        <!-- Header moderno -->
-        <header class="main-header">
-            <h1>
-                <i class="fas fa-balance-scale"></i> Justicia Clara
-            </h1>
-            <p>Comprende el estado de tu causa judicial en lenguaje simple</p>
-        </header>
 
-        <!-- Título de búsqueda enfocada -->
-        <div class="search-header">
-            <h2>
-                <i class="fas fa-user-search"></i>
-                Búsqueda por Nombre de Litigante
-            </h2>
-            <p class="search-description">
-                Encuentra causas judiciales buscando por el nombre de personas naturales o jurídicas involucradas
-            </p>
-        </div>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+  <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
 
-        <!-- Formulario de búsqueda por nombre -->
-        <div class="search-container">
-            <form id="form-busqueda-nombre">
-                <!-- Selector de tipo de persona -->
-                <div class="form-group">
-                    <label class="form-label-large">
-                        <i class="fas fa-user-tag"></i>
-                        Tipo de Persona
-                    </label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="tipo-persona" value="natural" checked />
-                            <span class="radio-text">
-                                <i class="fas fa-user"></i>
-                                Persona Natural
-                            </span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="tipo-persona" value="juridica" />
-                            <span class="radio-text">
-                                <i class="fas fa-building"></i>
-                                Persona Jurídica
-                            </span>
-                        </label>
-                    </div>
-                </div>
+    <header class="flex items-center justify-between whitespace-nowrap px-10 py-5">
+      <div class="flex items-center gap-4 text-zinc-900 dark:text-white">
+        <svg class="h-6 w-6 text-primary" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+        </svg>
+        <h2 class="text-xl font-bold tracking-[-0.015em]">Justicia Clara</h2>
+      </div>
+      <div class="flex items-center gap-9">
+        <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="#">Acerca de</a>
+        <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="#">Contacto</a>
+      </div>
+    </header>
 
-                <!-- Campos para Persona Natural -->
-                <div id="campos-persona-natural">
-                    <div class="form-section">
-                        <h3><i class="fas fa-user-circle"></i> Datos de Persona Natural</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Nombres</label>
-                                <input
-                                    type="text"
-                                    name="nombres"
-                                    class="form-input"
-                                    placeholder="Ej: Juan Carlos"
-                                />
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Apellido Paterno</label>
-                                <input
-                                    type="text"
-                                    name="apellido-paterno"
-                                    class="form-input"
-                                    placeholder="Ej: González"
-                                />
-                            </div>
+    <main class="flex flex-1 flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="w-full max-w-4xl text-center mb-12">
+        <h1 class="text-4xl font-black leading-tight tracking-[-0.033em] text-zinc-900 dark:text-white sm:text-5xl">
+          Entiende tu causa judicial, sin complicaciones.
+        </h1>
+        <p class="mt-4 text-lg text-zinc-600 dark:text-zinc-300">
+          Busca tu expediente por nombre de litigante de forma rápida y sencilla.
+        </p>
+      </div>
 
-                            <div class="form-group">
-                                <label>Apellido Materno</label>
-                                <input
-                                    type="text"
-                                    name="apellido-materno"
-                                    class="form-input"
-                                    placeholder="Ej: Pérez"
-                                />
-                            </div>
-                        </div>
-                        <div class="help-text-large">
-                            <i class="fas fa-info-circle"></i>
-                            Para persona natural debe completar al menos un campo (nombres, apellido paterno o apellido materno)
-                        </div>
-                    </div>
-                </div>
+      <div class="w-full max-w-4xl bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-8">
+        <form id="form-busqueda-nombre">
 
-                <!-- Campos para Persona Jurídica -->
-                <div id="campos-persona-juridica" style="display: none;">
-                    <div class="form-section">
-                        <h3><i class="fas fa-building"></i> Datos de Persona Jurídica</h3>
-                        <div class="form-group">
-                            <label>Nombre de la Persona Jurídica</label>
-                            <input
-                                type="text"
-                                name="nombre-persona-juridica"
-                                class="form-input"
-                                placeholder="Ej: EMPRESA CONSTRUCTORA ABC LTDA"
-                            />
-                            <span class="help-text">Razón social completa de la empresa u organización</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Campos comunes -->
-                <div class="form-section">
-                    <h3><i class="fas fa-cog"></i> Parámetros de Búsqueda</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Año *</label>
-                            <select name="año" class="form-input" required>
-                                <option value="">Seleccione Año</option>
-                                <option value="2025">2025</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                                <option value="2021">2021</option>
-                                <option value="2020">2020</option>
-                                <option value="2019">2019</option>
-                                <option value="2018">2018</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Competencia *</label>
-                            <select name="competencia" class="form-input" id="competencia-select" required>
-                                <option value="">Seleccione Competencia</option>
-                                <option value="Corte Suprema">Corte Suprema</option>
-                                <option value="Corte de Apelaciones">Corte de Apelaciones</option>
-                                <option value="Civil">Civil</option>
-                                <option value="Laboral">Laboral</option>
-                                <option value="Cobranza">Cobranza</option>
-                                <option value="Penal">Penal</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Campos dependientes - se habilitan según competencia -->
-                    <div id="campos-dependientes" style="display: none;">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Tribunal</label>
-                                <select name="tribunal" class="form-input" id="tribunal-select" disabled>
-                                    <option value="">Seleccione primero Competencia</option>
-                                </select>
-                                <span class="help-text">Apartado 3 - Dependiente de Competencia</span>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Corte</label>
-                                <select name="corte" class="form-input" id="corte-select" disabled>
-                                    <option value="">Seleccione primero Competencia</option>
-                                </select>
-                                <span class="help-text">Apartado 4 - Dependiente de Competencia</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <i class="fas fa-lightbulb"></i>
-                        <div>
-                            <strong>Dependencias del formulario:</strong>
-                            <ul>
-                                <li><strong>Corte Suprema:</strong> No requiere tribunal ni corte</li>
-                                <li><strong>Otras competencias:</strong> Requieren seleccionar tribunal y corte</li>
-                                <li><strong>Tribunales y cortes</strong> se cargan automáticamente según la competencia</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary btn-large">
-                    <i class="fas fa-search"></i>
-                    Realizar Búsqueda por Nombre
-                </button>
-            </form>
-        </div>
-
-        <!-- Loading indicator mejorado -->
-        <div id="loading" class="loading-container hidden">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Consultando información del Poder Judicial...</p>
-            <p class="loading-subtext">Esto puede tomar hasta 20 segundos</p>
-        </div>
-
-        <!-- Error display mejorado -->
-        <div id="error" class="alert alert-error hidden">
-            <i class="fas fa-exclamation-circle"></i>
-            <div class="alert-content">
-                <h3>Error en la Consulta</h3>
-                <p>Error message here</p>
+          <div class="form-group mb-6">
+            <label class="block text-base font-bold text-zinc-900 dark:text-white mb-3">
+              1. Tipo de Persona
+            </label>
+            <div class="radio-group grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label
+                class="radio-option flex items-center p-4 border border-zinc-300 dark:border-zinc-600 rounded-lg cursor-pointer has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
+                <input type="radio" name="tipo-persona" value="natural" class="form-radio text-primary focus:ring-primary"
+                  checked>
+                <span class="radio-text ml-3 flex items-center">
+                  <span class="material-symbols-outlined mr-2">person</span>
+                  Persona Natural
+                </span>
+              </label>
+              <label
+                class="radio-option flex items-center p-4 border border-zinc-300 dark:border-zinc-600 rounded-lg cursor-pointer has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
+                <input type="radio" name="tipo-persona" value="juridica" class="form-radio text-primary focus:ring-primary">
+                <span class="radio-text ml-3 flex items-center">
+                  <span class="material-symbols-outlined mr-2">business</span>
+                  Persona Jurídica
+                </span>
+              </label>
             </div>
-        </div>
+          </div>
 
-        <!-- Results section -->
-        <div id="results" class="hidden">
-            <!-- Content will be populated by JavaScript -->
-        </div>
+          <div id="campos-persona-natural" class="mb-6 p-6 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+            <h3 class="text-lg font-bold text-primary mb-4">Datos de Persona Natural</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300" for="nombres">Nombres</label>
+                <input
+                  class="form-input mt-1 block w-full h-12 px-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                  name="nombres" placeholder="Ej: Juan Carlos" type="text" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  for="apellido-paterno">Apellido Paterno</label>
+                <input
+                  class="form-input mt-1 block w-full h-12 px-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                  name="apellido-paterno" placeholder="Ej: González" type="text" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  for="apellido-materno">Apellido Materno</label>
+                <input
+                  class="form-input mt-1 block w-full h-12 px-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                  name="apellido-materno" placeholder="Ej: Pérez" type="text" />
+              </div>
+            </div>
+            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
+              <span class="material-symbols-outlined text-base">info</span>
+              <span>Debe completar al menos un campo (nombres, apellido paterno o apellido materno).</span>
+            </div>
+          </div>
 
-        <!-- Features section mejorado -->
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon blue">
-                    <i class="fas fa-sync-alt"></i>
+          <div id="campos-persona-juridica" class="hidden mb-6 p-6 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+            <h3 class="text-lg font-bold text-primary mb-4">Datos de Persona Jurídica</h3>
+            <div>
+              <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                for="nombre-persona-juridica">Nombre de la Persona Jurídica</label>
+              <input
+                class="form-input mt-1 block w-full h-12 px-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                name="nombre-persona-juridica" placeholder="Ej: EMPRESA CONSTRUCTORA ABC LTDA" type="text" />
+              <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Razón social completa de la empresa u
+                organización.</p>
+            </div>
+          </div>
+
+          <div class="mb-6 p-6 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+            <h3 class="text-lg font-bold text-primary mb-4">2. Parámetros de Búsqueda</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300" for="año">Año *</label>
+                <select
+                  class="form-select mt-1 block w-full h-12 px-3 text-base border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg"
+                  name="año" required>
+                  <option value="">Seleccione Año</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                  <option value="2019">2019</option>
+                  <option value="2018">2018</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  for="competencia">Competencia *</label>
+                <select
+                  class="form-select mt-1 block w-full h-12 px-3 text-base border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg"
+                  name="competencia" id="competencia-select" required>
+                  <option value="">Seleccione Competencia</option>
+                  <option value="Corte Suprema">Corte Suprema</option>
+                  <option value="Corte de Apelaciones">Corte de Apelaciones</option>
+                  <option value="Civil">Civil</option>
+                  <option value="Laboral">Laboral</option>
+                  <option value="Cobranza">Cobranza</option>
+                  <option value="Penal">Penal</option>
+                </select>
+              </div>
+
+              <div id="campos-dependientes" class="hidden md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300" for="tribunal">Tribunal</label>
+                  <select
+                    class="form-select mt-1 block w-full h-12 px-3 text-base border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg disabled:bg-zinc-100 dark:disabled:bg-zinc-800"
+                    name="tribunal" id="tribunal-select" disabled>
+                    <option value="">Seleccione primero Competencia</option>
+                  </select>
                 </div>
-                <h3>Información Actualizada</h3>
-                <p>Datos extraídos directamente del portal oficial del Poder Judicial de Chile</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon green">
-                    <i class="fas fa-robot"></i>
+                <div>
+                  <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300" for="corte">Corte</label>
+                  <select
+                    class="form-select mt-1 block w-full h-12 px-3 text-base border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg disabled:bg-zinc-100 dark:disabled:bg-zinc-800"
+                    name="corte" id="corte-select" disabled>
+                    <option value="">Seleccione primero Competencia</option>
+                  </select>
                 </div>
-                <h3>Traducción con IA</h3>
-                <p>Inteligencia artificial traduce términos legales complejos a lenguaje simple y comprensible</p>
-            </div>
+              </div>
 
-            <div class="feature-card">
-                <div class="feature-icon purple">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Privacidad Total</h3>
-                <p>No almacenamos ninguna información personal ni registros de sus consultas</p>
             </div>
+          </div>
+
+          <div class="md:col-span-2">
+            <button
+              class="w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-sm text-base font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+              type="submit" id="submit-button">
+              <span class="material-symbols-outlined mr-2">search</span>
+              Buscar ahora
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div id="loading" class="hidden w-full max-w-4xl text-center my-12">
+        <div
+          class="loading-spinner w-12 h-12 border-4 border-zinc-200 dark:border-zinc-600 border-t-primary rounded-full animate-spin mx-auto">
+        </div>
+        <p class="loading-text text-lg font-semibold text-zinc-900 dark:text-white mt-4">Consultando información...</p>
+        <p class="loading-subtext text-zinc-600 dark:text-zinc-300">Esto puede tomar hasta 20 segundos.</p>
+      </div>
+
+      <div id="error" class="hidden w-full max-w-4xl my-12">
+        <div
+          class="p-6 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-900 dark:text-red-200 shadow-md flex items-center gap-6">
+          <span class="material-symbols-outlined text-4xl">error</span>
+          <div class="flex-1">
+            <h3 class="text-xl font-bold leading-tight">Error en la Consulta</h3>
+            <p class="text-base font-normal leading-normal" id="error-message">Error message here</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="results" class="hidden w-full max-w-7xl my-12">
         </div>
 
-        <!-- Legal disclaimer mejorado -->
-        <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle"></i>
-            <div class="alert-content">
-                <h3>Aviso Legal Importante</h3>
-                <p>
-                    Esta herramienta es solo de apoyo informativo y <strong>no reemplaza la asesoría de un abogado profesional</strong>. 
-                    La información proporcionada puede contener errores o estar desactualizada. 
-                    Para decisiones legales importantes, siempre consulte con un profesional del derecho.
-                </p>
-            </div>
+    </main>
+
+    <footer class="w-full py-6 px-10 mt-12">
+      <div class="text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p>© 2024 Justicia Clara. Todos los derechos reservados.</p>
+        <div class="mt-2">
+          <a class="hover:underline" href="#">Términos de Servicio</a>
+          <span class="mx-2">|</span>
+          <a class="hover:underline" href="#">Política de Privacidad</a>
         </div>
-    </div>
-    <script src="/static/js/app.js"></script>
+      </div>
+    </footer>
+
+  </div>
+  <script src="/static/js/app.js"></script>
 </body>
+
 </html>

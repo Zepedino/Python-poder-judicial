@@ -53,11 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
     tipoPersonaRadios.forEach(radio => {
       radio.addEventListener('change', function() {
         if (this.value === 'natural') {
-          if (camposPersonaNatural) camposPersonaNatural.style.display = 'block';
-          if (camposPersonaJuridica) camposPersonaJuridica.style.display = 'none';
+          if (camposPersonaNatural) camposPersonaNatural.classList.remove('hidden');
+          if (camposPersonaJuridica) camposPersonaJuridica.classList.add('hidden');
         } else {
-          if (camposPersonaNatural) camposPersonaNatural.style.display = 'none';
-          if (camposPersonaJuridica) camposPersonaJuridica.style.display = 'block';
+          if (camposPersonaNatural) camposPersonaNatural.classList.add('hidden');
+          if (camposPersonaJuridica) camposPersonaJuridica.classList.remove('hidden');
         }
       });
     });
@@ -70,11 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (competencia === 'Corte Suprema') {
         // Corte Suprema no requiere tribunal ni corte
-        if (camposDependientes) camposDependientes.style.display = 'none';
+        if (camposDependientes) camposDependientes.classList.add('hidden');
         if (tribunalSelect) tribunalSelect.disabled = true;
         if (corteSelect) corteSelect.disabled = true;
       } else if (competencia) {
-        if (camposDependientes) camposDependientes.style.display = 'block';
+        if (camposDependientes) camposDependientes.classList.remove('hidden');
         
         // Habilitar y cargar tribunales
         if (tribunalSelect) {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         }
       } else {
-        if (camposDependientes) camposDependientes.style.display = 'none';
+        if (camposDependientes) camposDependientes.classList.add('hidden');
         if (tribunalSelect) tribunalSelect.disabled = true;
         if (corteSelect) corteSelect.disabled = true;
       }
@@ -178,81 +178,109 @@ function hideLoading() {
 }
 
 function showError(message) {
-  const errorDiv = document.getElementById('error');
-  if (errorDiv) {
-    const errorMessage = errorDiv.querySelector('.alert-content p');
-    if (errorMessage) errorMessage.textContent = message;
-    errorDiv.classList.remove('hidden');
-    errorDiv.scrollIntoView({ behavior: 'smooth' });
-  }
+    const errorDiv = document.getElementById('error');
+    if (errorDiv) {
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            errorMessage.textContent = message;
+        }
+        errorDiv.classList.remove('hidden');
+        errorDiv.scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
 }
 
+
 function hideMessages() {
-  const error = document.getElementById('error');
-  const results = document.getElementById('results');
-  if (error) error.classList.add('hidden');
-  if (results) results.classList.add('hidden');
+    const error = document.getElementById('error');
+    const results = document.getElementById('results');
+    if (error) error.classList.add('hidden');
+    if (results) {
+        results.classList.add('hidden');
+        results.innerHTML = ''; // Limpiar resultados anteriores
+    }
 }
 
 function showResults(data) {
-  const resultsDiv = document.getElementById('results');
-  if (!resultsDiv) return;
-  
-  resultsDiv.innerHTML = 
-    '<div class="results-header">' +
-      '<h2><i class="fas fa-file-alt"></i> Resultados de la Búsqueda</h2>' +
-      '<div class="search-summary">' +
-        '<p><strong>Tipo:</strong> ' + (data.tipoPersona === 'natural' ? 'Persona Natural' : 'Persona Jurídica') + '</p>' +
-        '<p><strong>Búsqueda:</strong> ' + data.searchInfo + '</p>' +
-        '<p><strong>Competencia:</strong> ' + data.competencia + '</p>' +
-        (data.tribunal ? '<p><strong>Tribunal:</strong> ' + data.tribunal + '</p>' : '') +
-        (data.corte ? '<p><strong>Corte:</strong> ' + data.corte + '</p>' : '') +
-        '<p><strong>Año:</strong> ' + data.año + '</p>' +
-        '<p><strong>Fecha:</strong> ' + new Date(data.timestamp).toLocaleString('es-CL') + '</p>' +
-      '</div>' +
-    '</div>' +
-    '<div class="results-content">' +
-      '<div class="result-column">' +
-        '<h3><i class="fas fa-file-text"></i> Datos Originales</h3>' +
-        '<div class="raw-data">' +
-          '<pre>' + data.rawData + '</pre>' +
-        '</div>' +
-      '</div>' +
-      '<div class="result-column">' +
-        '<h3><i class="fas fa-robot"></i> Explicación Simple</h3>' +
-        '<div class="translated-data">' +
-          data.translation.replace(/\n/g, '<br>') +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="results-actions">' +
-      '<button onclick="window.print()" class="btn-secondary">' +
-        '<i class="fas fa-print"></i> Imprimir' +
-      '</button>' +
-      '<button onclick="nuevaBusqueda()" class="btn-primary">' +
-        '<i class="fas fa-search"></i> Nueva Búsqueda' +
-      '</button>' +
-    '</div>';
-  
-  resultsDiv.classList.remove('hidden');
-  resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    const resultsDiv = document.getElementById('results');
+    if (!resultsDiv) return;
+
+    // Sanitizar y formatear el texto de traducción
+    const formattedTranslation = data.translation
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n/g, '<br>');
+
+    const resultsHTML = `
+    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6 md:p-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-700">
+        <div>
+          <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">Resultados de la Búsqueda</h2>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Mostrando resultados para: <span class="font-semibold">${data.searchInfo}</span>
+          </p>
+        </div>
+        <div class="flex items-center gap-2 mt-4 md:mt-0">
+          <button onclick="window.print()" class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <span class="material-symbols-outlined text-base">print</span>
+            Imprimir
+          </button>
+          <button onclick="nuevaBusqueda()" class="flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <span class="material-symbols-outlined text-base">search</span>
+            Nueva Búsqueda
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Columna de Datos Originales -->
+        <div class="p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-700">
+          <h3 class="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary">gavel</span>
+            Datos Originales
+          </h3>
+          <div class="h-96 overflow-y-auto pr-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <pre class="whitespace-pre-wrap font-mono">${data.rawData}</pre>
+          </div>
+        </div>
+
+        <!-- Columna de Explicación Simple -->
+        <div class="p-6 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg border border-emerald-200 dark:border-emerald-700">
+          <h3 class="text-lg font-bold text-primary flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined">lightbulb</span>
+            Explicación en Lenguaje Simple
+          </h3>
+          <div class="h-96 overflow-y-auto pr-2 text-base text-zinc-800 dark:text-zinc-200 space-y-4">
+            ${formattedTranslation}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+    resultsDiv.innerHTML = resultsHTML;
+    resultsDiv.classList.remove('hidden');
+    resultsDiv.scrollIntoView({
+        behavior: 'smooth'
+    });
 }
 
-function nuevaBusqueda() {
-  hideMessages();
-  const form = document.getElementById('form-busqueda-nombre');
-  if (form) {
-    form.reset();
-    // Resetear a persona natural por defecto
-    const naturalRadio = document.querySelector('input[name="tipo-persona"][value="natural"]');
-    if (naturalRadio) naturalRadio.checked = true;
-    
-    const camposPersonaNatural = document.getElementById('campos-persona-natural');  
-    const camposPersonaJuridica = document.getElementById('campos-persona-juridica');
-    const camposDependientes = document.getElementById('campos-dependientes');
-    
-    if (camposPersonaNatural) camposPersonaNatural.style.display = 'block';
-    if (camposPersonaJuridica) camposPersonaJuridica.style.display = 'none';
-    if (camposDependientes) camposDependientes.style.display = 'none';
-  }
+// Asegúrate de que esta función esté disponible globalmente si se llama desde el HTML
+window.nuevaBusqueda = function() {
+    hideMessages();
+    const form = document.getElementById('form-busqueda-nombre');
+    if (form) {
+        form.reset();
+        // Disparar evento de cambio para que la lógica de visibilidad se aplique
+        document.querySelector('input[name="tipo-persona"][value="natural"]').dispatchEvent(new Event('change'));
+    }
+    // Opcional: volver al formulario
+    const formContainer = document.getElementById('form-busqueda-nombre');
+    if (formContainer) {
+        formContainer.scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
 }

@@ -1,4 +1,4 @@
-gemini-2.5-flashimport google.generativeai as genai
+import google.generativeai as genai
 
 def translate_text(legal_text: str, api_key: str) -> str:
     if not api_key:
@@ -19,24 +19,24 @@ Instrucciones:
 5. Sugiere posibles próximos pasos
 
 Formato de respuesta requerido:
-**RESUMEN DE TU CAUSA**
+RESUMEN DE TU CAUSA
 
-**¿Qué tipo de caso es?**
+¿Qué tipo de caso es?
 [Explicación simple del tipo de causa]
 
-**¿Quiénes están involucrados?**
+¿Quiénes están involucrados?
 [Explicación de las partes]
 
-**¿En qué estado se encuentra?**
+¿En qué estado se encuentra?
 [Estado actual explicado en lenguaje simple]
 
-**¿Qué ha pasado hasta ahora?**
+¿Qué ha pasado hasta ahora?
 [Resumen de actuaciones importantes]
 
-**¿Qué viene después?**
+¿Qué viene después?
 [Próximos pasos explicados]
 
-**¿Qué significa esto para ti?**
+¿Y qué significa esto para ti?
 [Implicaciones prácticas]
 
 ---
@@ -65,24 +65,24 @@ def generate_basic_translation(legal_text: str) -> str:
         'Suspendida': 'Tu causa está temporalmente detenida.',
     }.get(estado, 'Tu causa está archivada en el tribunal.')
 
-    return f"""**RESUMEN DE TU CAUSA**
+    return f"""RESUMEN DE TU CAUSA
 
-**¿Qué tipo de caso es?**
+¿Qué tipo de caso es?
 Tu causa "{caratula}" es un proceso judicial que se está tramitando en los tribunales.
 
-**Estado actual: {estado}**
+Estado actual: {estado}
 {estado_explicacion}
 
-**¿Qué significa esto?**
+¿Qué significa esto?
 - Si está "en tramitación": El proceso judicial está avanzando
 - Si está "terminada": Ya hay una resolución final
 - Si está "suspendida": Hay una pausa temporal en el proceso
 - Si está "archivada": El expediente está guardado sin movimiento
 
-**Información importante:**
+Información importante:
 Esta es una explicación básica. Para entender completamente tu situación legal, es recomendable consultar con un abogado que pueda revisar los detalles específicos de tu caso.
 
-**Próximos pasos sugeridos:**
+Próximos pasos sugeridos:
 1. Revisa regularmente el estado de tu causa
 2. Mantén contacto con tu representante legal
 3. Cumple con las citaciones y requerimientos del tribunal

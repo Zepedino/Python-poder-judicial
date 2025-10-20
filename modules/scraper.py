@@ -82,7 +82,7 @@ def perform_scraping(search_data: dict) -> str:
 
                 print(f"--- Procesando Causa #{i + 1} (ROL: {rol}) ---")
 
-                causa_text = f"RESUMEN DE LA CAUSA\\nROL: {rol}\\nTipo Recurso: {tipo_recurso}\\nCaratulado: {caratulado}\\nFecha Ingreso: {fecha_ingreso}\\nEstado Causa: {estado_causa}\\nCorte: {corte}\\n"
+                causa_text = f"RESUMEN DE LA CAUSA\nROL: {rol}\nTipo Recurso: {tipo_recurso}\nCaratulado: {caratulado}\nFecha Ingreso: {fecha_ingreso}\nEstado Causa: {estado_causa}\nCorte: {corte}\n"
 
                 detail_link = row.locator('td:first-child a.toggle-modal')
                 onclick_command = detail_link.get_attribute('onclick')
@@ -101,7 +101,7 @@ def perform_scraping(search_data: dict) -> str:
                 modal_body_html = page.locator(f'{modal_selector} .modal-body').inner_html()
                 soup = BeautifulSoup(modal_body_html, 'html.parser')
 
-                causa_text += "\\nHISTORIAL DE MOVIMIENTOS:\\n"
+                causa_text += "\nHISTORIAL DE MOVIMIENTOS:\n"
                 
                 for tr in soup.select('#movimientosSup table tbody tr'):
                     celdas = tr.find_all('td')
@@ -110,9 +110,9 @@ def perform_scraping(search_data: dict) -> str:
                         tramite = celdas[5].get_text(strip=True)
                         desc_tramite = celdas[6].get_text(strip=True)
                         if fecha and tramite:
-                            causa_text += f"- {fecha}: {tramite} - {desc_tramite}\\n"
-                
-                all_details_text += f"\\n\\n═════════ Causa ROL: {rol} ═════════\\n\\n{causa_text}"
+                            causa_text += f"- {fecha}: {tramite} - {desc_tramite}\n"
+
+                all_details_text += f"\n\n═════════ Causa ROL: {rol} ═════════\n\n{causa_text}"
 
                 close_modal_button_selector = f'{modal_selector} button[data-dismiss="modal"]'
                 page.click(close_modal_button_selector)
