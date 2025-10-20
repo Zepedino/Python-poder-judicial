@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "vercel-playwright": "2.0.0"
+    "@microlink/vercel-builder-playwright": "latest"
   }
 }
