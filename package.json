@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "vercel-playwright": "2.0.0"
+  }
+}
