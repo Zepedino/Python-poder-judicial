@@ -1,0 +1,15 @@
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.ejemplo
+.git/
+.gitignore
+README.md
+package.json
+package-lock.json
+.vscode/
+error_screenshot.png
+*.log
+.DS_Store
