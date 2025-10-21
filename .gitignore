@@ -1,12 +1,49 @@
-# Ignorar dependencias de Node.js
+# Dependencias
 node_modules/
-
-# Ignorar el entorno virtual de Python
 .venv/
+venv/
+env/
 
-# Ignorar archivos de caché de Python
+# Python
 __pycache__/
 *.pyc
-# Ignorar archivos de entorno
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Entorno
 .env
 .env.ejemplo
+.env.local
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs y debugging
+*.log
+error_screenshot.png
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Bases de datos locales
+*.sqlite
+*.db
