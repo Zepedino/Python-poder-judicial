@@ -35,6 +35,15 @@ def perform_scraping(search_data: dict) -> str:
             )
             page = context.new_page()
             page.set_default_timeout(60000)
+
+            print("[SCRAPER] Configurando bloqueo de CSS/Imágenes/Fuentes...")
+            def block_unnecessary_requests(route):
+                if route.request.resource_type in ["stylesheet", "image", "font"]:
+                    route.abort()
+                else:
+                    route.continue_()
+            
+            page.route("**/*", block_unnecessary_requests)
             
             # Navegar a la página
             url = 'https://oficinajudicialvirtual.pjud.cl/indexN.php'
