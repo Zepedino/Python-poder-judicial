@@ -1,23 +1,28 @@
 {
+  "version": 2,
   "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node"
-    },
     {
       "src": "main.py",
       "use": "@vercel/python",
       "config": {
-        "env": {
-          "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
-        }
+        "maxLambdaSize": "50mb"
       }
     }
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ]
+  ],
+  "functions": {
+    "main.py": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
 }
