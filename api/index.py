@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import os
 import sys
 import datetime
+import traceback
 
 # Configurar paths
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -74,11 +75,21 @@ def buscar_nombre():
             if not tribunal or not corte:
                 return jsonify({'error': f'Para {competencia} se requiere tribunal y corte'}), 400
 
+        # Verificar variables de entorno ANTES del scraping
+        browserless_token = os.getenv('BROWSERLESS_TOKEN')
+        if not browserless_token:
+            print("[ERROR] BROWSERLESS_TOKEN no configurado")
+            return jsonify({
+                'error': 'Configuración del servidor incorrecta',
+                'details': 'BROWSERLESS_TOKEN no está configurado. Por favor contacte al administrador.'
+            }), 500
+
         # Log para debug
         print(f"[INFO] Iniciando búsqueda:")
         print(f"  - Tipo: {tipo_persona}")
         print(f"  - Año: {año}")
         print(f"  - Competencia: {competencia}")
+        print(f"  - Browserless configurado: {bool(browserless_token)}")
         
         # Realizar scraping
         print("[INFO] Llamando a perform_scraping...")
@@ -124,29 +135,45 @@ def buscar_nombre():
         return jsonify(response_data)
 
     except ValueError as e:
-        print(f'[ERROR] Error de validación: {e}')
+        error_msg = str(e)
+        print(f'[ERROR] Error de validación: {error_msg}')
+        traceback.print_exc()
         return jsonify({
             'error': 'Error en los datos proporcionados',
-            'details': str(e)
+            'details': error_msg
         }), 400
         
     except Exception as e:
-        print(f'[ERROR] Error inesperado: {e}')
-        import traceback
+        error_msg = str(e)
+        print(f'[ERROR] Error inesperado: {error_msg}')
         traceback.print_exc()
+        
+        # Errores específicos de Browserless
+        if 'browserless' in error_msg.lower() or 'token' in error_msg.lower():
+            return jsonify({
+                'error': 'Error de conexión con el navegador remoto',
+                'details': 'No se pudo conectar al servicio de navegación. Verifique la configuración de BROWSERLESS_TOKEN.'
+            }), 500
+        
         return jsonify({
             'error': 'Error interno del servidor',
-            'details': str(e)
+            'details': error_msg,
+            'type': type(e).__name__
         }), 500
 
 @app.route('/health')
 def health():
     """Endpoint de salud para verificar que el servicio está funcionando"""
+    browserless_configured = bool(os.getenv('BROWSERLESS_TOKEN'))
+    gemini_configured = bool(os.getenv('GEMINI_API_KEY'))
+    
     return jsonify({
         'status': 'ok',
         'timestamp': datetime.datetime.now().isoformat(),
-        'browserless_configured': bool(os.getenv('BROWSERLESS_TOKEN')),
-        'gemini_configured': bool(os.getenv('GEMINI_API_KEY'))
+        'browserless_configured': browserless_configured,
+        'gemini_configured': gemini_configured,
+        'python_version': sys.version,
+        'environment': 'vercel' if os.getenv('VERCEL') else 'local'
     })
 
 # Para desarrollo local
