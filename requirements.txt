@@ -1,5 +1,5 @@
 flask
-playwright-core
+playwright
 google-generativeai
 python-dotenv
 beautifulsoup4
