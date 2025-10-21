@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       
       // Mostrar loading
-      showLoading();
+      showLoading('Iniciando búsqueda...', 'Preparando consulta...');
       hideMessages();
       
       try {
@@ -140,8 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
           requestData.nombrePersonaJuridica = formData.get('nombre-persona-juridica');
         }
         
-        // Realizar petición
-        const response = await fetch('/api/buscar-nombre', {
+        // ====== PASO 1: SCRAPING (50 segundos) ======
+        showLoading('Paso 1 de 2: Extrayendo información...', 'Conectando al sistema judicial (esto puede tomar hasta 50 segundos)');
+        
+        const scrapingResponse = await fetch('/api/scraping', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -149,13 +151,46 @@ document.addEventListener('DOMContentLoaded', function() {
           body: JSON.stringify(requestData)
         });
         
-        const result = await response.json();
+        const scrapingResult = await scrapingResponse.json();
         
-        if (result.success) {
-          showResults(result);
-        } else {
-          showError(result.error || 'Error desconocido');
+        if (!scrapingResult.success) {
+          showError(scrapingResult.error || 'Error en la extracción de datos');
+          hideLoading();
+          return;
         }
+        
+        console.log('✅ Scraping completado:', scrapingResult);
+        
+        // ====== PASO 2: TRADUCCIÓN (10+ segundos) ======
+        showLoading('Paso 2 de 2: Traduciendo a lenguaje simple...', 'Procesando información con Inteligencia Artificial (esto puede tomar hasta 15 segundos)');
+        
+        const traducirResponse = await fetch('/api/traducir', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            rawData: scrapingResult.rawData
+          })
+        });
+        
+        const traducirResult = await traducirResponse.json();
+        
+        if (!traducirResult.success) {
+          showError(traducirResult.error || 'Error en la traducción');
+          hideLoading();
+          return;
+        }
+        
+        console.log('✅ Traducción completada:', traducirResult);
+        
+        // Combinar resultados
+        const finalResult = {
+          ...scrapingResult,
+          translation: traducirResult.translation
+        };
+        
+        showResults(finalResult);
         
       } catch (error) {
         console.error('Error:', error);
@@ -167,9 +202,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function showLoading() {
+function showLoading(text = 'Consultando información...', subtext = 'Esto puede tomar hasta 20 segundos.') {
   const loading = document.getElementById('loading');
-  if (loading) loading.classList.remove('hidden');
+  if (loading) {
+    // Actualizar textos
+    const loadingText = loading.querySelector('.loading-text');
+    const loadingSubtext = loading.querySelector('.loading-subtext');
+    
+    if (loadingText) loadingText.textContent = text;
+    if (loadingSubtext) loadingSubtext.textContent = subtext;
+    
+    loading.classList.remove('hidden');
+  }
 }
 
 function hideLoading() {
