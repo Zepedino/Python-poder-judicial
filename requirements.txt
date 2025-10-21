@@ -3,4 +3,3 @@ playwright
 google-generativeai
 python-dotenv
 beautifulsoup4
-sparticuz-chromium
