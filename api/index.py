@@ -9,15 +9,18 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
+print(f"[STARTUP] Current dir: {current_dir}")
+print(f"[STARTUP] Parent dir: {parent_dir}")
+print(f"[STARTUP] Python path: {sys.path}")
+
 # Importar módulos
 try:
     from modules.scraper import perform_scraping
     from modules.ai_translator import translate_text
+    print("[STARTUP] ✅ Módulos importados correctamente")
 except ImportError as e:
-    print(f"Error importando módulos: {e}")
-    print(f"Current dir: {current_dir}")
-    print(f"Parent dir: {parent_dir}")
-    print(f"sys.path: {sys.path}")
+    print(f"[STARTUP] ❌ Error importando módulos: {e}")
+    traceback.print_exc()
     raise
 
 # Configurar Flask
@@ -28,25 +31,121 @@ app = Flask(
     static_url_path='/static'
 )
 
-# Configuración
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 @app.route('/')
 def index():
     """Página principal"""
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        print(f"[ERROR] Error cargando template: {e}")
+        traceback.print_exc()
+        return f"Error: {e}", 500
+
+@app.route('/health')
+def health():
+    """Endpoint de salud mejorado"""
+    try:
+        browserless_token = os.getenv('BROWSERLESS_TOKEN')
+        gemini_api_key = os.getenv('GEMINI_API_KEY')
+        
+        # Intentar importar playwright
+        playwright_available = False
+        try:
+            from playwright.sync_api import sync_playwright
+            playwright_available = True
+        except Exception as e:
+            print(f"[HEALTH] Playwright error: {e}")
+        
+        return jsonify({
+            'status': 'ok',
+            'timestamp': datetime.datetime.now().isoformat(),
+            'environment': os.getenv('VERCEL_ENV', 'local'),
+            'python_version': sys.version,
+            'config': {
+                'browserless_token_set': bool(browserless_token),
+                'browserless_token_length': len(browserless_token) if browserless_token else 0,
+                'gemini_api_key_set': bool(gemini_api_key),
+                'playwright_available': playwright_available,
+                'template_folder': app.template_folder,
+                'static_folder': app.static_folder
+            }
+        })
+    except Exception as e:
+        print(f"[HEALTH] Error: {e}")
+        traceback.print_exc()
+        return jsonify({'status': 'error', 'error': str(e)}), 500
+
+@app.route('/test-browserless')
+def test_browserless():
+    """Endpoint para probar conexión con Browserless"""
+    try:
+        from playwright.sync_api import sync_playwright
+        
+        browserless_token = os.getenv('BROWSERLESS_TOKEN')
+        if not browserless_token:
+            return jsonify({
+                'success': False,
+                'error': 'BROWSERLESS_TOKEN no configurado'
+            }), 500
+        
+        ws_endpoint = f"wss://chrome.browserless.io?token={browserless_token}"
+        
+        with sync_playwright() as p:
+            browser = p.chromium.connect_over_cdp(ws_endpoint)
+            page = browser.new_page()
+            page.goto("https://www.google.com", timeout=10000)
+            title = page.title()
+            browser.close()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Conexión exitosa con Browserless',
+                'test_page_title': title
+            })
+            
+    except Exception as e:
+        print(f"[TEST-BROWSERLESS] Error: {e}")
+        traceback.print_exc()
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        }), 500
 
 @app.route('/api/buscar-nombre', methods=['POST'])
 def buscar_nombre():
     """Endpoint para búsqueda por nombre"""
+    print("\n" + "="*50)
+    print("[API] Nueva solicitud de búsqueda")
+    print("="*50)
+    
     try:
-        # Obtener datos del request
+        # 1. Verificar variables de entorno PRIMERO
+        browserless_token = os.getenv('BROWSERLESS_TOKEN')
+        gemini_api_key = os.getenv('GEMINI_API_KEY')
+        
+        print(f"[API] Browserless token presente: {bool(browserless_token)}")
+        print(f"[API] Gemini API key presente: {bool(gemini_api_key)}")
+        
+        if not browserless_token:
+            error_msg = "BROWSERLESS_TOKEN no está configurado en las variables de entorno de Vercel"
+            print(f"[API] ❌ {error_msg}")
+            return jsonify({
+                'error': 'Error de configuración del servidor',
+                'details': error_msg,
+                'help': 'Configura BROWSERLESS_TOKEN en Vercel Settings > Environment Variables'
+            }), 500
+        
+        # 2. Obtener y validar datos del request
         request_data = request.get_json()
+        print(f"[API] Datos recibidos: {request_data}")
         
         if not request_data:
             return jsonify({'error': 'No se recibieron datos'}), 400
         
-        # Extraer parámetros
+        # 3. Extraer y validar parámetros
         tipo_persona = request_data.get('tipoPersona')
         nombres = request_data.get('nombres', '')
         apellido_paterno = request_data.get('apellidoPaterno', '')
@@ -63,10 +162,10 @@ def buscar_nombre():
         
         if tipo_persona == 'natural':
             if not nombres and not apellido_paterno and not apellido_materno:
-                return jsonify({'error': 'Para persona natural debe ingresar al menos: nombres, apellido paterno o apellido materno'}), 400
+                return jsonify({'error': 'Para persona natural debe ingresar al menos un campo'}), 400
         elif tipo_persona == 'juridica':
             if not nombre_persona_juridica:
-                return jsonify({'error': 'Para persona jurídica debe ingresar el nombre de la empresa/organización'}), 400
+                return jsonify({'error': 'Para persona jurídica debe ingresar el nombre'}), 400
         
         if not año or not competencia:
             return jsonify({'error': 'Año y competencia son obligatorios'}), 400
@@ -75,43 +174,37 @@ def buscar_nombre():
             if not tribunal or not corte:
                 return jsonify({'error': f'Para {competencia} se requiere tribunal y corte'}), 400
 
-        # Verificar variables de entorno ANTES del scraping
-        browserless_token = os.getenv('BROWSERLESS_TOKEN')
-        if not browserless_token:
-            print("[ERROR] BROWSERLESS_TOKEN no configurado")
-            return jsonify({
-                'error': 'Configuración del servidor incorrecta',
-                'details': 'BROWSERLESS_TOKEN no está configurado. Por favor contacte al administrador.'
-            }), 500
-
-        # Log para debug
-        print(f"[INFO] Iniciando búsqueda:")
-        print(f"  - Tipo: {tipo_persona}")
-        print(f"  - Año: {año}")
-        print(f"  - Competencia: {competencia}")
-        print(f"  - Browserless configurado: {bool(browserless_token)}")
+        print(f"[API] ✅ Validación completada")
         
-        # Realizar scraping
-        print("[INFO] Llamando a perform_scraping...")
-        raw_data = perform_scraping(request_data)
+        # 4. Realizar scraping
+        print("[API] 🔄 Iniciando scraping...")
+        try:
+            raw_data = perform_scraping(request_data)
+        except Exception as scraping_error:
+            print(f"[API] ❌ Error en scraping: {scraping_error}")
+            traceback.print_exc()
+            return jsonify({
+                'error': 'Error al realizar la búsqueda',
+                'details': str(scraping_error),
+                'type': 'scraping_error'
+            }), 500
         
         if not raw_data:
-            print("[WARNING] No se encontraron resultados")
+            print("[API] ⚠️ No se encontraron resultados")
             return jsonify({'error': 'No se encontró información para los criterios especificados'}), 404
         
-        print(f"[INFO] Scraping exitoso. Datos obtenidos: {len(raw_data)} caracteres")
+        print(f"[API] ✅ Scraping exitoso: {len(raw_data)} caracteres")
         
-        # Traducir con Gemini
-        print("[INFO] Iniciando traducción con Gemini...")
-        gemini_api_key = os.getenv('GEMINI_API_KEY')
-        
-        if not gemini_api_key:
-            print("[WARNING] GEMINI_API_KEY no encontrada, usando traductor básico")
-        
-        translation = translate_text(raw_data, gemini_api_key)
-        print("[INFO] Traducción completada")
+        # 5. Traducir con Gemini
+        print("[API] 🔄 Traduciendo...")
+        try:
+            translation = translate_text(raw_data, gemini_api_key)
+            print(f"[API] ✅ Traducción completada: {len(translation)} caracteres")
+        except Exception as translation_error:
+            print(f"[API] ⚠️ Error en traducción (usando básica): {translation_error}")
+            translation = translate_text(raw_data, None)
 
-        # Preparar respuesta
+        # 6. Preparar respuesta
         search_info = (
             f"{apellido_paterno} {apellido_materno} {nombres}".strip() 
             if tipo_persona == 'natural' 
@@ -131,55 +224,31 @@ def buscar_nombre():
             "timestamp": datetime.datetime.now().isoformat()
         }
         
-        print("[SUCCESS] Búsqueda completada exitosamente")
+        print("[API] ✅ Búsqueda completada exitosamente")
         return jsonify(response_data)
 
-    except ValueError as e:
-        error_msg = str(e)
-        print(f'[ERROR] Error de validación: {error_msg}')
-        traceback.print_exc()
-        return jsonify({
-            'error': 'Error en los datos proporcionados',
-            'details': error_msg
-        }), 400
-        
     except Exception as e:
         error_msg = str(e)
-        print(f'[ERROR] Error inesperado: {error_msg}')
+        error_type = type(e).__name__
+        print(f'[API] ❌ Error inesperado ({error_type}): {error_msg}')
         traceback.print_exc()
-        
-        # Errores específicos de Browserless
-        if 'browserless' in error_msg.lower() or 'token' in error_msg.lower():
-            return jsonify({
-                'error': 'Error de conexión con el navegador remoto',
-                'details': 'No se pudo conectar al servicio de navegación. Verifique la configuración de BROWSERLESS_TOKEN.'
-            }), 500
         
         return jsonify({
             'error': 'Error interno del servidor',
             'details': error_msg,
-            'type': type(e).__name__
+            'type': error_type,
+            'help': 'Revisa los logs de Vercel para más detalles'
         }), 500
-
-@app.route('/health')
-def health():
-    """Endpoint de salud para verificar que el servicio está funcionando"""
-    browserless_configured = bool(os.getenv('BROWSERLESS_TOKEN'))
-    gemini_configured = bool(os.getenv('GEMINI_API_KEY'))
-    
-    return jsonify({
-        'status': 'ok',
-        'timestamp': datetime.datetime.now().isoformat(),
-        'browserless_configured': browserless_configured,
-        'gemini_configured': gemini_configured,
-        'python_version': sys.version,
-        'environment': 'vercel' if os.getenv('VERCEL') else 'local'
-    })
 
 # Para desarrollo local
 if __name__ == '__main__':
-    print("Iniciando servidor Flask en modo desarrollo...")
+    print("\n" + "="*50)
+    print("🚀 Iniciando servidor Flask (modo desarrollo)")
+    print("="*50)
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+# Para Vercel
+app = app
 
 # Para Vercel - exportar la app
 app = app
