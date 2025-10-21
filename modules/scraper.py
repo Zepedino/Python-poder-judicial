@@ -14,7 +14,7 @@ def perform_scraping(search_data: dict) -> str:
         raise ValueError("BROWSERLESS_TOKEN no configurado en variables de entorno")
     
     # URL de conexión a Browserless
-    ws_endpoint = f"wss://chrome.browserless.io?token={browserless_token}"
+    ws_endpoint = f"wss://production-sfo.browserless.io?token={browserless_token}"
     
     browser = None
     context = None
