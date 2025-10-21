@@ -1,6 +1,18 @@
 {
-  "dependencies": {
-    "@sparticuz/chromium": "^119.0.0",
-    "@sparticuz/chromium-min": "^141.0.0"
-  }
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ]
 }
