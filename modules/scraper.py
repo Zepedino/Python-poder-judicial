@@ -13,7 +13,7 @@ def get_chromium_executable_path():
     # --- MÉTODO 1: Buscar el navegador de @sparticuz/chromium (para Vercel y local) ---
     try:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        package_path = os.path.join(project_root, 'node_modules', '@sparticuz', 'chromium')
+        package_path = os.path.join(project_root, 'node_modules', '@sparticuz', 'chromium-min')
         executable_name = "chrome.exe" if sys.platform == "win32" else "chrome"
 
         if os.path.isdir(package_path):
