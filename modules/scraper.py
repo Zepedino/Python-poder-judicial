@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
-from .constants import CORTES_MAP, TRIBUNALES_MAP, COMPETENCIA_MAP
+from .constants import CORTES_MAP, COMPETENCIA_MAP, TRIBUNALES_MAP_CIVIL, TRIBUNALES_MAP_LABORAL, TRIBUNALES_MAP_PENAL, TRIBUNALES_MAP_COBRANZA
 import os
 import traceback
 
