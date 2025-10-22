@@ -46,7 +46,7 @@ def perform_scraping(search_data: dict) -> str:
             page.route("**/*", block_unnecessary_requests)
             
             # Navegar a la página
-            url = 'https://oficinajudicialvirtual.pjud.cl/indexN.php'
+            url = 'https://oficinajudicialvirtual.pjud.cl/home/'
             print(f"[SCRAPER] Navegando a: {url}")
             page.goto(url, wait_until='domcontentloaded')
             print("[SCRAPER] ✓ Página cargada")
