@@ -144,19 +144,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300" for="año">Año *</label>
-                <select
-                  class="form-select mt-1 block w-full h-12 px-3 text-base border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg"
-                  name="año" required>
-                  <option value="">Seleccione Año</option>
-                  <option value="2025">2025</option>
-                  <option value="2024">2024</option>
-                  <option value="2023">2023</option>
-                  <option value="2022">2022</option>
-                  <option value="2021">2021</option>
-                  <option value="2020">2020</option>
-                  <option value="2019">2019</option>
-                  <option value="2018">2018</option>
-                </select>
+                <input
+                  class="form-input mt-1 block w-full h-12 px-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                  name="año" placeholder="Ej: 2025" type="number" min="1990" max="2099" required />
+                <p class="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Ingrese el año de la causa (entre 1990 y 2099).</p>
               </div>
               <div>
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
