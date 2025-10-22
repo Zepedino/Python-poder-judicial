@@ -593,7 +593,7 @@ TRIBUNALES_MAP_PENAL = {
     'Coordinacion': '8010',
 }
 
-TRIBUNALES_COBRANZA_MAP = {
+TRIBUNALES_MAP_COBRANZA = {
   'Jdo. de Letras y Garantía de Pozo Almonte': '6',
   'Juzgado de Letras de Tocopilla': '13',
   'Juzgado de Letras y Garantía de Maria Elena': '14',
@@ -752,4 +752,5 @@ COMPETENCIA_MAP = {
   'Penal': '5',
   'Cobranza': '6',
   'Familia': '7'
+
 }
