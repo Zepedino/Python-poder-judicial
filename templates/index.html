@@ -52,13 +52,23 @@
         </svg>
         <h2 class="text-xl font-bold tracking-[-0.015em]">Justicia Clara</h2>
       </div>
-      <div class="flex items-center gap-9">
+      <div class="flex items-center gap-4">
         <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="#">Acerca de</a>
         <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="#">Contacto</a>
         {% if user %}
+        {% if user.role == 'cliente' %}
+        <a href="/historial" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-base">history</span>
+          Mis Búsquedas
+        </a>
+        {% endif %}
+        <div class="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
+          <span class="material-symbols-outlined text-primary">account_circle</span>
+          <span class="text-sm font-medium">{{ user.name }}</span>
+        </div>
         <button onclick="cerrarSesion()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
           <span class="material-symbols-outlined text-base">logout</span>
-          Cerrar Sesión
+          Salir
         </button>
         {% endif %}
       </div>

@@ -886,10 +886,10 @@ document.addEventListener('DOMContentLoaded', function() {
           requestData.nombrePersonaJuridica = formData.get('nombre-persona-juridica');
         }
         
-        // Realizar búsqueda
-        showLoading('Consultando información...', 'Esto puede tomar hasta 60 segundos.');
+        // Paso 1: Realizar scraping (máximo 60s para Vercel)
+        showLoading('Extrayendo información judicial...', 'Paso 1/2 - Esto puede tomar hasta 60 segundos.');
         
-        const response = await fetch('/api/buscar-nombre', {
+        const scrapingResponse = await fetch('/api/scraping', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -897,16 +897,62 @@ document.addEventListener('DOMContentLoaded', function() {
           body: JSON.stringify(requestData)
         });
         
-        const result = await response.json();
+        const scrapingResult = await scrapingResponse.json();
         
-        if (!response.ok) {
-          showError(result.error || 'Error en la búsqueda');
+        if (!scrapingResponse.ok) {
+          showError(scrapingResult.error || 'Error en la extracción de datos');
           hideLoading();
           return;
         }
         
-        console.log('✅ Búsqueda completada:', result);
-        showResults(result);
+        console.log('✅ Scraping completado:', scrapingResult);
+        
+        // Paso 2: Traducir con IA (otro máximo 60s para Vercel)
+        showLoading('Procesando con Inteligencia Artificial...', 'Paso 2/2 - Traduciendo a lenguaje simple.');
+        
+        const translateResponse = await fetch('/api/translate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            rawData: scrapingResult.rawData
+          })
+        });
+        
+        const translateResult = await translateResponse.json();
+        
+        if (!translateResponse.ok) {
+          showError(translateResult.error || 'Error en la traducción');
+          hideLoading();
+          return;
+        }
+        
+        console.log('✅ Traducción completada:', translateResult);
+        
+        // Combinar resultados
+        const finalResult = {
+          ...scrapingResult,
+          translation: translateResult.translation
+        };
+        
+        console.log('✅ Proceso completo:', finalResult);
+        
+        // Guardar búsqueda en el historial
+        try {
+          await fetch('/api/save-search', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(finalResult)
+          });
+          console.log('✅ Búsqueda guardada en historial');
+        } catch (saveError) {
+          console.warn('⚠️ No se pudo guardar en historial:', saveError);
+        }
+        
+        showResults(finalResult);
         
       } catch (error) {
         console.error('Error:', error);

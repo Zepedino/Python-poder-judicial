@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Historial de Búsquedas - Justicia Clara</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#059669",
+            "background-light": "#f5f8f7",
+            "background-dark": "#10221c",
+            "text-light": "#212529",
+            "text-dark": "#f8f9fa"
+          },
+          fontFamily: {
+            "display": ["Public Sans", "sans-serif"]
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Public Sans', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+  <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between whitespace-nowrap px-10 py-5 border-b border-zinc-200 dark:border-zinc-700">
+      <div class="flex items-center gap-4 text-zinc-900 dark:text-white">
+        <svg class="h-6 w-6 text-primary" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+        </svg>
+        <h2 class="text-xl font-bold tracking-[-0.015em]">Justicia Clara</h2>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="/app" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-base">search</span>
+          Nueva Búsqueda
+        </a>
+        <a href="/historial" class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-primary/10 text-primary rounded-lg">
+          <span class="material-symbols-outlined text-base">history</span>
+          Historial
+        </a>
+        <div class="flex items-center gap-3 px-4 py-2 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
+          <span class="material-symbols-outlined text-primary">account_circle</span>
+          <div class="text-sm">
+            <p class="font-semibold">{{ user.name }}</p>
+            {% if user.plan %}
+            <p class="text-xs text-zinc-500 dark:text-zinc-400">Plan: {{ user.plan|title }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <button onclick="cerrarSesion()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-base">logout</span>
+          Salir
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 px-10 py-8">
+      <div class="max-w-7xl mx-auto">
+        <!-- Título -->
+        <div class="mb-8">
+          <h1 class="text-3xl font-black text-zinc-900 dark:text-white mb-2">
+            Historial de Búsquedas
+          </h1>
+          <p class="text-zinc-600 dark:text-zinc-300">
+            Accede rápidamente a todas tus causas consultadas
+          </p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div id="stats-container" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <!-- Stats will be loaded here -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="flex items-center justify-center py-12">
+          <div class="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full"></div>
+        </div>
+
+        <!-- Historial Grid -->
+        <div id="historial-grid" class="hidden grid grid-cols-1 gap-4">
+          <!-- Historial items will be loaded here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-12">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-zinc-100 dark:bg-zinc-700 rounded-full mb-4">
+            <span class="material-symbols-outlined text-5xl text-zinc-400">history</span>
+          </div>
+          <h3 class="text-xl font-bold text-zinc-900 dark:text-white mb-2">No hay búsquedas aún</h3>
+          <p class="text-zinc-600 dark:text-zinc-300 mb-6">Realiza tu primera búsqueda para empezar</p>
+          <a href="/app" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90">
+            <span class="material-symbols-outlined">search</span>
+            Nueva Búsqueda
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal de Detalle -->
+    <div id="detail-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
+          <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">Detalle de la Causa</h2>
+          <button onclick="closeModal()" class="text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
+            <span class="material-symbols-outlined text-3xl">close</span>
+          </button>
+        </div>
+        <div id="modal-content" class="flex-1 overflow-y-auto p-6">
+          <!-- Content will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Cerrar sesión
+    async function cerrarSesion() {
+      try {
+        const response = await fetch('/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          window.location.href = '/login';
+        }
+      } catch (error) {
+        console.error('Error cerrando sesión:', error);
+      }
+    }
+
+    // Cargar historial
+    async function loadHistorial() {
+      try {
+        const response = await fetch('/api/historial');
+        const data = await response.json();
+
+        if (data.success) {
+          displayStats(data.stats);
+          displayHistorial(data.searches);
+        } else {
+          showError('Error cargando historial');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showError('Error de conexión');
+      }
+    }
+
+    // Mostrar estadísticas
+    function displayStats(stats) {
+      const statsContainer = document.getElementById('stats-container');
+      
+      statsContainer.innerHTML = `
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-primary text-2xl">search</span>
+            <span class="text-2xl font-bold text-zinc-900 dark:text-white">${stats.total}</span>
+          </div>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300">Búsquedas Totales</p>
+        </div>
+        
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-blue-500 text-2xl">gavel</span>
+            <span class="text-2xl font-bold text-zinc-900 dark:text-white">${Object.keys(stats.por_competencia).length}</span>
+          </div>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300">Competencias</p>
+        </div>
+        
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-green-500 text-2xl">calendar_month</span>
+            <span class="text-2xl font-bold text-zinc-900 dark:text-white">${Object.keys(stats.por_mes).length}</span>
+          </div>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300">Meses Activos</p>
+        </div>
+        
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="material-symbols-outlined text-purple-500 text-2xl">schedule</span>
+            <span class="text-sm font-bold text-zinc-900 dark:text-white">${stats.ultima_busqueda ? new Date(stats.ultima_busqueda).toLocaleDateString('es-CL') : 'N/A'}</span>
+          </div>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300">Última Búsqueda</p>
+        </div>
+      `;
+    }
+
+    // Mostrar historial
+    function displayHistorial(searches) {
+      const loading = document.getElementById('loading');
+      const grid = document.getElementById('historial-grid');
+      const emptyState = document.getElementById('empty-state');
+
+      loading.classList.add('hidden');
+
+      if (searches.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      grid.classList.remove('hidden');
+      grid.innerHTML = searches.map(search => `
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow hover:shadow-lg transition-shadow cursor-pointer" onclick="viewDetail('${search.id}')">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-primary">${search.tipo_persona === 'natural' ? 'person' : 'business'}</span>
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white">${search.search_info}</h3>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded">
+                  ${search.competencia}
+                </span>
+                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">
+                  ${search.corte}
+                </span>
+                <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-medium rounded">
+                  Año ${search.año}
+                </span>
+              </div>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                <span class="material-symbols-outlined text-xs align-middle">schedule</span>
+                ${new Date(search.timestamp).toLocaleString('es-CL')}
+              </p>
+            </div>
+            <button onclick="event.stopPropagation(); deleteSearch('${search.id}')" class="text-zinc-400 hover:text-red-500 transition-colors">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+          
+          <div class="border-t border-zinc-200 dark:border-zinc-700 pt-4">
+            <button class="flex items-center gap-2 text-primary font-medium text-sm hover:underline">
+              <span class="material-symbols-outlined text-base">visibility</span>
+              Ver Detalles
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Ver detalle
+    async function viewDetail(searchId) {
+      try {
+        const response = await fetch(`/api/historial/${searchId}`);
+        const data = await response.json();
+
+        if (data.success) {
+          const modal = document.getElementById('detail-modal');
+          const content = document.getElementById('modal-content');
+          
+          const search = data.search;
+          
+          content.innerHTML = `
+            <div class="space-y-6">
+              <div>
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-3">Información General</h3>
+                <div class="grid grid-cols-2 gap-4 p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+                  <div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Tipo</p>
+                    <p class="font-medium">${search.tipo_persona === 'natural' ? 'Persona Natural' : 'Persona Jurídica'}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Nombre</p>
+                    <p class="font-medium">${search.search_info}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Competencia</p>
+                    <p class="font-medium">${search.competencia}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Corte</p>
+                    <p class="font-medium">${search.corte}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Tribunal</p>
+                    <p class="font-medium">${search.tribunal || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-400">Año</p>
+                    <p class="font-medium">${search.año}</p>
+                  </div>
+                </div>
+              </div>
+
+              ${search.translation ? `
+                <div>
+                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-3">Resumen Traducido (IA)</h3>
+                  <div class="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <div class="prose dark:prose-invert max-w-none">
+                      ${search.translation.replace(/\n/g, '<br>')}
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
+
+              <div>
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white mb-3">Datos Originales</h3>
+                <div class="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg max-h-96 overflow-y-auto">
+                  <pre class="text-sm whitespace-pre-wrap">${search.raw_data}</pre>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          modal.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error cargando detalle de la búsqueda');
+      }
+    }
+
+    // Cerrar modal
+    function closeModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    // Eliminar búsqueda
+    async function deleteSearch(searchId) {
+      if (!confirm('¿Estás seguro de eliminar esta búsqueda?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/historial/${searchId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          loadHistorial(); // Recargar
+        } else {
+          alert('Error eliminando búsqueda');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+      }
+    }
+
+    // Mostrar error
+    function showError(message) {
+      const loading = document.getElementById('loading');
+      loading.innerHTML = `
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
+            <span class="material-symbols-outlined text-3xl text-red-500">error</span>
+          </div>
+          <p class="text-xl font-bold text-zinc-900 dark:text-white">${message}</p>
+        </div>
+      `;
+    }
+
+    // Cargar al inicio
+    document.addEventListener('DOMContentLoaded', loadHistorial);
+
+    // Cerrar modal con ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+
+</html>
