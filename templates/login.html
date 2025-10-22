@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Login - Justicia Clara Admin</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#059669",
+            "background-light": "#f5f8f7",
+            "background-dark": "#10221c",
+            "text-light": "#212529",
+            "text-dark": "#f8f9fa"
+          },
+          fontFamily: {
+            "display": ["Public Sans", "sans-serif"]
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Public Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+  <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+
+    <header class="flex items-center justify-between whitespace-nowrap px-10 py-5">
+      <div class="flex items-center gap-4 text-zinc-900 dark:text-white">
+        <svg class="h-6 w-6 text-primary" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+        </svg>
+        <h2 class="text-xl font-bold tracking-[-0.015em]">Justicia Clara</h2>
+      </div>
+      <div class="flex items-center gap-9">
+        <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="/">Inicio</a>
+      </div>
+    </header>
+
+    <main class="flex flex-1 flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+            <span class="material-symbols-outlined text-primary text-3xl">admin_panel_settings</span>
+          </div>
+          <h1 class="text-3xl font-black leading-tight tracking-[-0.033em] text-zinc-900 dark:text-white">
+            Panel de Administración
+          </h1>
+          <p class="mt-2 text-base text-zinc-600 dark:text-zinc-300">
+            Ingresa tus credenciales para continuar
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-8">
+          <form id="login-form">
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2" for="username">
+                Usuario
+              </label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400">person</span>
+                <input
+                  class="form-input w-full h-12 pl-11 pr-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                  id="username" name="username" placeholder="Ingrese su usuario" type="text" required autocomplete="username" />
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2" for="password">
+                Contraseña
+              </label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-3 text-zinc-400">lock</span>
+                <input
+                  class="form-input w-full h-12 pl-11 pr-4 sm:text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-primary focus:border-primary"
+                  id="password" name="password" placeholder="Ingrese su contraseña" type="password" required autocomplete="current-password" />
+              </div>
+            </div>
+
+            <div id="error-message" class="hidden mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-900 dark:text-red-200 flex items-center gap-3">
+              <span class="material-symbols-outlined text-xl">error</span>
+              <span class="text-sm font-medium" id="error-text"></span>
+            </div>
+
+            <button
+              class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              type="submit" id="submit-button">
+              <span class="material-symbols-outlined mr-2">login</span>
+              Iniciar Sesión
+            </button>
+          </form>
+        </div>
+
+        <div class="mt-6 text-center">
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">
+            ¿Problemas para acceder? <a href="#" class="text-primary hover:underline font-medium">Contacta soporte</a>
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="w-full py-6 px-10 mt-12">
+      <div class="text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p>© 2024 Justicia Clara. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+  </div>
+  <script src="/static/js/login.js"></script>
+</body>
+
+</html>

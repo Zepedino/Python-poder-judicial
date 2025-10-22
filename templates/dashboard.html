@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Dashboard - Justicia Clara Admin</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#059669",
+            "background-light": "#f5f8f7",
+            "background-dark": "#10221c",
+            "text-light": "#212529",
+            "text-dark": "#f8f9fa"
+          },
+          fontFamily: {
+            "display": ["Public Sans", "sans-serif"]
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Public Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+  <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+
+    <header class="flex items-center justify-between whitespace-nowrap px-10 py-5 border-b border-zinc-200 dark:border-zinc-700">
+      <div class="flex items-center gap-4 text-zinc-900 dark:text-white">
+        <svg class="h-6 w-6 text-primary" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+        </svg>
+        <h2 class="text-xl font-bold tracking-[-0.015em]">Justicia Clara - Admin</h2>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-zinc-600 dark:text-zinc-300">account_circle</span>
+          <span class="text-sm font-medium text-zinc-900 dark:text-white" id="user-name">Administrador</span>
+        </div>
+        <button
+          class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          id="logout-button">
+          <span class="material-symbols-outlined text-base">logout</span>
+          Cerrar Sesión
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 px-10 py-8">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-8">
+          <h1 class="text-3xl font-black leading-tight tracking-[-0.033em] text-zinc-900 dark:text-white">
+            Panel de Administración
+          </h1>
+          <p class="mt-2 text-base text-zinc-600 dark:text-zinc-300">
+            Bienvenido al panel de control de Justicia Clara
+          </p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Búsquedas Hoy</p>
+                <p class="text-3xl font-bold text-zinc-900 dark:text-white mt-2">152</p>
+                <p class="text-xs text-primary mt-1">+12% vs ayer</p>
+              </div>
+              <div class="bg-primary/10 rounded-full p-3">
+                <span class="material-symbols-outlined text-primary text-2xl">search</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Usuarios Activos</p>
+                <p class="text-3xl font-bold text-zinc-900 dark:text-white mt-2">48</p>
+                <p class="text-xs text-green-600 mt-1">+5 nuevos</p>
+              </div>
+              <div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-3">
+                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">people</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Casos Procesados</p>
+                <p class="text-3xl font-bold text-zinc-900 dark:text-white mt-2">1,234</p>
+                <p class="text-xs text-zinc-500 mt-1">Este mes</p>
+              </div>
+              <div class="bg-purple-100 dark:bg-purple-900/30 rounded-full p-3">
+                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-2xl">gavel</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Tiempo Promedio</p>
+                <p class="text-3xl font-bold text-zinc-900 dark:text-white mt-2">8.3s</p>
+                <p class="text-xs text-primary mt-1">-2s mejora</p>
+              </div>
+              <div class="bg-orange-100 dark:bg-orange-900/30 rounded-full p-3">
+                <span class="material-symbols-outlined text-orange-600 dark:text-orange-400 text-2xl">schedule</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-8 mb-8">
+          <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-6">Acciones Rápidas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <button
+              class="flex items-center gap-4 p-6 border-2 border-zinc-200 dark:border-zinc-700 rounded-lg hover:border-primary hover:bg-primary/5 transition-all group">
+              <div class="bg-primary/10 group-hover:bg-primary/20 rounded-full p-3">
+                <span class="material-symbols-outlined text-primary text-2xl">description</span>
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-zinc-900 dark:text-white">Ver Reportes</h3>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">Análisis y estadísticas</p>
+              </div>
+            </button>
+
+            <button
+              class="flex items-center gap-4 p-6 border-2 border-zinc-200 dark:border-zinc-700 rounded-lg hover:border-primary hover:bg-primary/5 transition-all group">
+              <div class="bg-primary/10 group-hover:bg-primary/20 rounded-full p-3">
+                <span class="material-symbols-outlined text-primary text-2xl">settings</span>
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-zinc-900 dark:text-white">Configuración</h3>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">Ajustes del sistema</p>
+              </div>
+            </button>
+
+            <button
+              class="flex items-center gap-4 p-6 border-2 border-zinc-200 dark:border-zinc-700 rounded-lg hover:border-primary hover:bg-primary/5 transition-all group">
+              <div class="bg-primary/10 group-hover:bg-primary/20 rounded-full p-3">
+                <span class="material-symbols-outlined text-primary text-2xl">group_add</span>
+              </div>
+              <div class="text-left">
+                <h3 class="font-bold text-zinc-900 dark:text-white">Gestionar Usuarios</h3>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">Administrar accesos</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Actividad Reciente -->
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-lg p-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Actividad Reciente</h2>
+            <button class="text-sm font-medium text-primary hover:underline">Ver todo</button>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+              <div class="bg-green-100 dark:bg-green-900/30 rounded-full p-2">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-zinc-900 dark:text-white">Búsqueda completada</p>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">Usuario buscó en Corte de Apelaciones de Santiago</p>
+              </div>
+              <span class="text-xs text-zinc-500 dark:text-zinc-400">Hace 2 min</span>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+              <div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-2">
+                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">person_add</span>
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-zinc-900 dark:text-white">Nuevo usuario registrado</p>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">juan.perez@example.com se unió a la plataforma</p>
+              </div>
+              <span class="text-xs text-zinc-500 dark:text-zinc-400">Hace 15 min</span>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+              <div class="bg-orange-100 dark:bg-orange-900/30 rounded-full p-2">
+                <span class="material-symbols-outlined text-orange-600 dark:text-orange-400">update</span>
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-zinc-900 dark:text-white">Sistema actualizado</p>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">Se aplicaron mejoras de rendimiento</p>
+              </div>
+              <span class="text-xs text-zinc-500 dark:text-zinc-400">Hace 1 hora</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="w-full py-6 px-10 border-t border-zinc-200 dark:border-zinc-700">
+      <div class="text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p>© 2024 Justicia Clara. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+  </div>
+  <script src="/static/js/dashboard.js"></script>
+</body>
+
+</html>

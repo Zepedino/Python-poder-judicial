@@ -1,13 +1,25 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from dotenv import load_dotenv
 import os
 import datetime
 from modules.scraper import perform_scraping
 from modules.ai_translator import translate_text
+from modules.auth import (
+    authenticate_user, 
+    login_required, 
+    admin_required,
+    create_session,
+    destroy_session,
+    get_current_user,
+    is_authenticated
+)
 
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+app.secret_key = os.getenv('SECRET_KEY', 'justicia-clara-secret-key-change-in-production')
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 @app.route('/')
 def index():
@@ -71,6 +83,67 @@ def buscar_nombre():
             'error': 'Error interno del servidor',
             'details': str(e)
         }), 500
+
+@app.route('/login', methods=['GET'])
+def login():
+    """Muestra el formulario de login"""
+    if is_authenticated():
+        return redirect(url_for('dashboard'))
+    return render_template('login.html')
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    """Procesa el login de usuario"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return jsonify({'error': 'Usuario y contraseña son requeridos'}), 400
+        
+        user = authenticate_user(username, password)
+        
+        if user:
+            create_session(user)
+            return jsonify({
+                'success': True,
+                'message': 'Login exitoso',
+                'user': user
+            })
+        else:
+            return jsonify({'error': 'Credenciales inválidas'}), 401
+            
+    except Exception as e:
+        print(f'Error en login: {e}')
+        return jsonify({'error': 'Error en el servidor'}), 500
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    """Cierra la sesión del usuario"""
+    destroy_session()
+    return jsonify({'success': True, 'message': 'Sesión cerrada correctamente'})
+
+@app.route('/dashboard')
+@admin_required
+def dashboard():
+    """Panel de administración"""
+    user = get_current_user()
+    return render_template('dashboard.html', user=user)
+
+@app.route('/api/dashboard/stats')
+@admin_required
+def dashboard_stats():
+    """Obtiene estadísticas para el dashboard"""
+    # Aquí puedes implementar lógica real de estadísticas
+    # Por ahora devolvemos datos de ejemplo
+    return jsonify({
+        'searches_today': 152,
+        'active_users': 48,
+        'cases_processed': 1234,
+        'avg_time': 8.3,
+        'timestamp': datetime.datetime.now().isoformat()
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
