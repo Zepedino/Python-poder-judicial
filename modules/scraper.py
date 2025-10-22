@@ -66,8 +66,25 @@ def perform_scraping(search_data: dict) -> str:
 
             # Obtener códigos de los mapeos
             codigo_corte = CORTES_MAP.get(search_data.get('corte'), '')
-            codigo_tribunal = TRIBUNALES_MAP.get(search_data.get('tribunal'), '')
             codigo_competencia = COMPETENCIA_MAP.get(search_data.get('competencia'), '1')
+            
+            # Seleccionar el mapa de tribunales correcto según la competencia
+            competencia = search_data.get('competencia')
+            tribunales_map = {}
+            
+            if competencia == 'Civil':
+                tribunales_map = TRIBUNALES_MAP_CIVIL
+            elif competencia == 'Laboral':
+                tribunales_map = TRIBUNALES_MAP_LABORAL
+            elif competencia == 'Penal':
+                tribunales_map = TRIBUNALES_MAP_PENAL
+            elif competencia == 'Cobranza':
+                tribunales_map = TRIBUNALES_MAP_COBRANZA
+            else:
+                # Para Corte Suprema y Corte de Apelaciones usar Civil por defecto
+                tribunales_map = TRIBUNALES_MAP_CIVIL
+            
+            codigo_tribunal = tribunales_map.get(search_data.get('tribunal'), '')
 
             # Seleccionar competencia
             page.select_option('select#nomCompetencia', codigo_competencia)
