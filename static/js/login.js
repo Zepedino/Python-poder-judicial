@@ -81,8 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Login exitoso - redirigir al dashboard
-        window.location.href = '/dashboard';
+        // Login exitoso - redirigir según el rol del usuario
+        const redirectUrl = data.redirect || '/dashboard';
+        window.location.href = redirectUrl;
       } else {
         // Error de autenticación
         showError(data.error || 'Error al iniciar sesión. Verifique sus credenciales.');

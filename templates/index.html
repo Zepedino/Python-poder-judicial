@@ -55,6 +55,12 @@
       <div class="flex items-center gap-9">
         <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="#">Acerca de</a>
         <a class="text-zinc-900 dark:text-white text-sm font-medium leading-normal" href="#">Contacto</a>
+        {% if user %}
+        <button onclick="cerrarSesion()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-base">logout</span>
+          Cerrar Sesión
+        </button>
+        {% endif %}
       </div>
     </header>
 
@@ -235,6 +241,26 @@
 
   </div>
   <script src="/static/js/app.js"></script>
+  <script>
+    // Función para cerrar sesión
+    async function cerrarSesion() {
+      try {
+        const response = await fetch('/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          window.location.href = '/login';
+        }
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+        alert('Error al cerrar sesión');
+      }
+    }
+  </script>
 </body>
 
 </html>

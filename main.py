@@ -23,7 +23,16 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    """Página principal - redirige según el estado de autenticación"""
+    if is_authenticated():
+        user = get_current_user()
+        # Si es admin, va al dashboard
+        if user and user.get('role') == 'admin':
+            return redirect(url_for('dashboard'))
+        # Si es usuario normal, va a la aplicación
+        return render_template('index.html', user=user)
+    # Si no está autenticado, redirige al login
+    return redirect(url_for('login'))
 
 @app.route('/api/buscar-nombre', methods=['POST'])
 def buscar_nombre():
@@ -106,10 +115,15 @@ def api_login():
         
         if user:
             create_session(user)
+            
+            # Determinar redirección según el rol
+            redirect_url = '/dashboard' if user.get('role') == 'admin' else '/'
+            
             return jsonify({
                 'success': True,
                 'message': 'Login exitoso',
-                'user': user
+                'user': user,
+                'redirect': redirect_url
             })
         else:
             return jsonify({'error': 'Credenciales inválidas'}), 401
@@ -124,10 +138,17 @@ def logout():
     destroy_session()
     return jsonify({'success': True, 'message': 'Sesión cerrada correctamente'})
 
+@app.route('/app')
+@login_required
+def app_page():
+    """Página de la aplicación para usuarios autenticados"""
+    user = get_current_user()
+    return render_template('index.html', user=user)
+
 @app.route('/dashboard')
 @admin_required
 def dashboard():
-    """Panel de administración"""
+    """Panel de administración - solo para admins"""
     user = get_current_user()
     return render_template('dashboard.html', user=user)
 
