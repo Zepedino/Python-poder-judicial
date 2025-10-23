@@ -229,7 +229,7 @@ def scraping_only():
         }), 500
 
 
-@app.route('/api/traducir', methods=['POST'])
+@app.route('/api/translate', methods=['POST'])
 def traducir_only():
     """Endpoint para realizar SOLO la traducción con Gemini (Paso 2 de 2)"""
     print("\n" + "="*50)
